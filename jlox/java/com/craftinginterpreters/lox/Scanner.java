@@ -103,7 +103,20 @@ public class Scanner {
                 if (match('/')) {
                     // ignore the rest of the line
                     while (peek() != '\n' && !isAtEnd()) advance();
-                } else {
+                } else if (match ('*')) {
+                    // block comments
+                    while (peek() != '*' && peekNext() != '/' && !isAtEnd()) {
+                        if (peek() == '\n') line++;
+                        advance();
+                    }
+
+                    if (isAtEnd()) {
+                        Lox.error(line, "Unterminated block comment");
+                    }
+                    advance();
+                    advance();
+                }
+                else {
                     // normal slash operation
                     addToken(SLASH);
                 }
@@ -275,3 +288,6 @@ public class Scanner {
     }
 
 }
+
+
+ 
