@@ -1,0 +1,27 @@
+Compiler (or interpreter) design several steps:
+
+1) Scanning:
+------------
+take stream of chars and transform into list of tokens:
+[v][a][r][ ][ ][a][v][e][r][a][g][e][][=][][(][m][i][n][+][m][a][x][)][/][2][;]
+    to
+[var], [average], [=], [(] + [min] + [max] + [)] + [/] + [2] + [;]
+
+2) Parsing:
+------------
+Take a list of tokens and generate an AST:
+
+stmt. var:              [average]
+                            |
+   expr. binary            [/]
+                          /  \
+   expr. binary        [+]    [2]    expr. literal 
+                       / \
+   expr. variable   [min] [max] expr. variable
+
+
+3) Static Analysis:
+-------------------
+Binding:
+    For each identifier, we find out where that name is defined and wire the two together.
+
