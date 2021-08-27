@@ -32,7 +32,11 @@ public class ReversePolishNotation implements Expr.Visitor<String> {
 
     @Override
     public String visitUnaryExpr(Unary expr) {
-       return polishisize(expr.operator.lexeme, expr.right);
+        String op = expr.operator.lexeme;
+        if (expr.operator.type == TokenType.MINUS) 
+            op = "~";
+        
+        return polishisize(op, expr.right);
     }
 
     private String polishisize(String operator, Expr... expressions) {
@@ -49,7 +53,7 @@ public class ReversePolishNotation implements Expr.Visitor<String> {
     }
 
     public static void main(String[] args) {
-        Expr expression = new Expr.Binary(
+        Expr expression1 = new Expr.Binary(
             new Expr.Grouping(
                 new Expr.Binary(
                     new Expr.Literal(1), new Token(TokenType.PLUS, "+", null, 1), new Expr.Literal(2))
@@ -61,7 +65,27 @@ public class ReversePolishNotation implements Expr.Visitor<String> {
             )
         );
 
-        System.out.println(new ReversePolishNotation().convert(expression));
+        Expr expression2 = new Expr.Binary(
+            new Expr.Grouping(
+                new Expr.Binary(
+                    new Expr.Unary(new Token(TokenType.MINUS, "-", null, 1), new Expr.Literal(3)), new Token(TokenType.PLUS, "+", null, 1), new Expr.Literal(2))
+            ), 
+            new Token(TokenType.STAR, "*", null, 1), 
+            new Expr.Grouping(
+                new Expr.Binary(
+                    new Expr.Literal(4), new Token(TokenType.MINUS, "-", null, 1), new Expr.Literal(3))
+            )
+        );
+
+        Expr expression3 = new Expr.Binary( // -123 * ("str")
+        new Expr.Unary(
+            new Token(TokenType.MINUS, "-", null, 1),
+            new Expr.Literal(123)),
+        new Token(TokenType.STAR, "*", null, 1),
+        new Expr.Grouping(
+            new Expr.Literal("str")));
+
+        System.out.println(new ReversePolishNotation().convert(expression3));
     }
     
 }
