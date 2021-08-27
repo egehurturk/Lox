@@ -113,6 +113,8 @@ public class Scanner {
                     if (isAtEnd()) {
                         Lox.error(line, "Unterminated block comment");
                     }
+
+                    // escape * and /
                     advance();
                     advance();
                 }

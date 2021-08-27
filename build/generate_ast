@@ -1,0 +1,2 @@
+#!/bin/bash
+java -cp ./build/release/jlox/java com.craftinginterpreters.tool.GenerateAst $@

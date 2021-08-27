@@ -20,6 +20,14 @@ clox:
 cpplox:
 	@ $(MAKE) -f util/c.make NAME=cpplox MODE=debug CPP=true SOURCE_DIR=clox
 
+# Compile the java code for generating AST
+generate_ast:
+	@ $(MAKE) -f util/java.make DIR=jlox/java PACKAGE=tool NAME=release
+	@ touch $(BUILD_DIR)/generate_ast
+	@ echo "#!/bin/bash" > $(BUILD_DIR)/generate_ast
+	@ echo "java -cp ./build/release/jlox/java com.craftinginterpreters.tool.GenerateAst \$$@" >> $(BUILD_DIR)/generate_ast
+	@ chmod 755 ./build/generate_ast
+
 # Compile the Java interpreter .java files to .class files.
 jlox: 
 	@ $(MAKE) -f util/java.make DIR=jlox/java PACKAGE=lox NAME=release
