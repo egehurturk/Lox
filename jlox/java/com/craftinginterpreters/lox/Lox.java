@@ -51,10 +51,20 @@ public class Lox {
             System.out.print("> ");
             String line = reader.readLine();
             // CTRL-D kills the prompt, resulting in a null line
-            if (line == null) break;
+            if (line == null) {
+                System.out.println();
+                break;
+            }
             run(line);
             hadError = false;
         }
+    }
+
+    static void error(Token token, String message) {
+        if (token.type == TokenType.EOF)
+            report(token.line, " at end", message);
+        else
+            report(token.line, " at '" + token.lexeme + "'", message);
     }
 
     /**
@@ -65,8 +75,13 @@ public class Lox {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         
-        for (Token token: tokens) 
-            System.out.println(token);
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
+        
+        if (expression == null) return;
+        if (hadError) return;
+
+        System.out.println(new AstPrinter().print(expression));
     }
 
     /**
