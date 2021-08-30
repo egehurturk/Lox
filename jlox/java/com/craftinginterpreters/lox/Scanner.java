@@ -98,6 +98,7 @@ public class Scanner {
                 break;
             case '>':
                 addToken(match('=') ? GREATER_EQUAL : GREATER);
+                break;
             case '/':
                 // check for comments
                 if (match('/')) {

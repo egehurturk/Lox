@@ -13,6 +13,7 @@ public class Lox {
     private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
     static boolean hadRuntimeError = false;
+    private static boolean debugEnabled = true;
 
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -79,7 +80,7 @@ public class Lox {
     private static void run(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
-
+        
         Parser parser = new Parser(tokens);
         Expr expression = parser.parse();
 
@@ -109,4 +110,10 @@ public class Lox {
     private static void report(int line, String where, String message) {
         System.err.println("[line " + line + "] Error" + where + ": " + message);
     }
+
+    public static void debug(String message) {
+        if (debugEnabled)
+            System.out.println("[DEBUG] : " + message);
+    }
 }
+

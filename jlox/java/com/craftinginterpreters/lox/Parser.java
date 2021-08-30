@@ -108,37 +108,36 @@ public class Parser {
         }
 
         if (match(LEFT_PAREN)) {
+            System.out.println("( FOUUUUND");
             Expr expr = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
         }
 
-        // // Error productions.
-        // if (match(BANG_EQUAL, EQUAL_EQUAL)) {
-        //     error(previous(), "Missing left-hand operand.");
-        //     equality();
-        //     return null;
-        // }
+        // Error productions.
+        if (match(BANG_EQUAL, EQUAL_EQUAL)) {
+            error(previous(), "Missing left-hand operand.");
+            equality();
+            return null;
+        }
 
-        // if (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
-        //     error(previous(), "Missing left-hand operand.");
-        //     comparison();
-        //     return null;
-        // }
+        if (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
+            error(previous(), "Missing left-hand operand.");
+            comparison();
+            return null;
+        }
 
-        // if (match(PLUS)) {
-        //     error(previous(), "Missing left-hand operand.");
-        //     term();
-        //     return null;
-        // }
+        if (match(PLUS)) {
+            error(previous(), "Missing left-hand operand.");
+            term();
+            return null;
+        }
 
-        // if (match(SLASH, STAR)) {
-        //     error(previous(), "Missing left-hand operand.");
-        //     factor();
-        //     return null;
-        // }
-
-
+        if (match(SLASH, STAR)) {
+            error(previous(), "Missing left-hand operand.");
+            factor();
+            return null;
+        }
 
         throw error(peek(), "Expect expression.");
         
