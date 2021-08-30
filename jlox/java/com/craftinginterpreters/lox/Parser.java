@@ -103,7 +103,9 @@ public class Parser {
         if (match(TRUE)) return new Expr.Literal(true);
         if (match(NIL)) return new Expr.Literal(null);
 
-        if (match(NUMBER, STRING)) return new Expr.Literal(previous().literal);
+        if (match(NUMBER, STRING)) {
+            return new Expr.Literal(previous().literal);
+        }
 
         if (match(LEFT_PAREN)) {
             Expr expr = expression();
@@ -111,30 +113,30 @@ public class Parser {
             return new Expr.Grouping(expr);
         }
 
-        // Error productions.
-        if (match(BANG_EQUAL, EQUAL_EQUAL)) {
-            error(previous(), "Missing left-hand operand.");
-            equality();
-            return null;
-        }
+        // // Error productions.
+        // if (match(BANG_EQUAL, EQUAL_EQUAL)) {
+        //     error(previous(), "Missing left-hand operand.");
+        //     equality();
+        //     return null;
+        // }
 
-        if (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
-            error(previous(), "Missing left-hand operand.");
-            comparison();
-            return null;
-        }
+        // if (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
+        //     error(previous(), "Missing left-hand operand.");
+        //     comparison();
+        //     return null;
+        // }
 
-        if (match(PLUS)) {
-            error(previous(), "Missing left-hand operand.");
-            term();
-            return null;
-        }
+        // if (match(PLUS)) {
+        //     error(previous(), "Missing left-hand operand.");
+        //     term();
+        //     return null;
+        // }
 
-        if (match(SLASH, STAR)) {
-            error(previous(), "Missing left-hand operand.");
-            factor();
-            return null;
-        }
+        // if (match(SLASH, STAR)) {
+        //     error(previous(), "Missing left-hand operand.");
+        //     factor();
+        //     return null;
+        // }
 
 
 
