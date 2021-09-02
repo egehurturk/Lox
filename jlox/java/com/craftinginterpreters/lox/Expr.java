@@ -11,6 +11,7 @@ public abstract class Expr {
 		public R visitGroupingExpr(Grouping expr);
 		public R visitLiteralExpr(Literal expr);
 		public R visitUnaryExpr(Unary expr);
+		public R visitVariableExpr(Variable expr);
 	}
 
 
@@ -30,11 +31,6 @@ public abstract class Expr {
 		public <R> R accept(Visitor<R> visitor) {
 			return visitor.visitBinaryExpr(this);
 		}
-
-		@Override
-		public String toString() {
-			return left.toString() + " " + operator.lexeme + " " + right.toString();
-		}
 	}
 
 	public static class Grouping extends Expr {
@@ -49,11 +45,6 @@ public abstract class Expr {
 		public <R> R accept(Visitor<R> visitor) {
 			return visitor.visitGroupingExpr(this);
 		}
-
-		@Override
-		public String toString() {
-			return "(" + expression.toString() + ")";
-		}
 	}
 
 	public static class Literal extends Expr {
@@ -67,11 +58,6 @@ public abstract class Expr {
 		@Override
 		public <R> R accept(Visitor<R> visitor) {
 			return visitor.visitLiteralExpr(this);
-		}
-
-		@Override
-		public String toString() {
-			return value.toString();
 		}
 	}
 
@@ -89,10 +75,19 @@ public abstract class Expr {
 		public <R> R accept(Visitor<R> visitor) {
 			return visitor.visitUnaryExpr(this);
 		}
+	}
+
+	public static class Variable extends Expr {
+
+		public final Token name;
+
+		public Variable(Token name) {
+			this.name = name;
+		}
 
 		@Override
-		public String toString() {
-			return operator.lexeme + right.toString();
+		public <R> R accept(Visitor<R> visitor) {
+			return visitor.visitVariableExpr(this);
 		}
 	}
 }

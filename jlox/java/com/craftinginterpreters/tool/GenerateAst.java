@@ -20,10 +20,19 @@ public class GenerateAst {
 			"Binary   : Expr left, Token operator, Expr right",
       		"Grouping : Expr expression",
       		"Literal  : Object value",
-      		"Unary    : Token operator, Expr right"
+      		"Unary    : Token operator, Expr right",
+			"Variable : Token name"
+		);
+
+
+		List<String> stmtSubClassDesc = Arrays.asList(
+			"Expression : Expr expression",
+			"Print      : Expr expression",
+			"Var        : Token name, Expr initializer"	
 		);
 
 		defineAst(outputDir, "Expr", subclassDesc);
+		defineAst(outputDir, "Stmt", stmtSubClassDesc);
     }    
 
 	private static void defineAst(String outputDir, String baseName, List<String> subclassDesc) throws IOException {

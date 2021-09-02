@@ -1,15 +1,15 @@
 package com.craftinginterpreters.lox;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import com.craftinginterpreters.lox.Expr.Unary;
 
 import static com.craftinginterpreters.lox.TokenType.*;
 
 public class Parser {
 
-    private static class ParseError extends RuntimeException {}
+    private static class ParseError extends RuntimeException {
+    }
 
     private final List<Token> tokens;
 
@@ -17,8 +17,9 @@ public class Parser {
     private int current = 0;
 
     /**
-     * Our alphabet consists of list of tokens, i.e., the source is
-     * a list of tokens. 
+     * Our alphabet consists of list of tokens, i.e., the source is a list of
+     * tokens.
+     * 
      * @param tokens a list of tokens, obtained from the scanner
      */
     public Parser(List<Token> tokens) {
@@ -27,12 +28,52 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    public Expr parse() {
+    public List<Stmt> parse() {
+        List<Stmt> statements = new ArrayList<>();
+        while (!isAtEnd())
+            statements.add(declaration());
+       return statements;
+    }
+
+    private Stmt declaration() {
         try {
-            return expression();
+            if (match(VAR)) return varDeclaration();
+            return statement();
         } catch (ParseError error) {
+            synchronize();
             return null;
         }
+    }
+
+    private Stmt varDeclaration() {
+        Token name = consume(IDENTIFIER, "Expected variable name.");
+
+        Expr initializer = null;
+        if (match(EQUAL)) {
+            initializer = expression();
+        }
+
+        consume(SEMICOLON, "Expect ; after variable declaration.");
+        return new Stmt.Var(name, initializer);
+    }
+
+    private Stmt statement() {
+        if (match(PRINT))
+            return printStatement();
+
+        return expressionStatement();
+    }
+
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(SEMICOLON, "Expect ; after value.");
+        return new Stmt.Print(value);
+    }
+
+    private Stmt expressionStatement() {
+        Expr expr = expression();
+        consume(SEMICOLON, "Expect ; after value.");
+        return new Stmt.Expression(expr);
     }
 
     private Expr expression() {
@@ -43,7 +84,8 @@ public class Parser {
         // First call to comparison terminal in the grammar
         Expr expr = comparison();
 
-        // According to the grammar, if there isn't any '!=' or '==' tokens, exit the loop
+        // According to the grammar, if there isn't any '!=' or '==' tokens, exit the
+        // loop
         while (match(BANG_EQUAL, EQUAL_EQUAL)) {
             Token operator = previous();
             Expr right = comparison();
@@ -99,13 +141,19 @@ public class Parser {
     }
 
     private Expr primary() {
-        if (match(FALSE)) return new Expr.Literal(false);
-        if (match(TRUE)) return new Expr.Literal(true);
-        if (match(NIL)) return new Expr.Literal(null);
+        if (match(FALSE))
+            return new Expr.Literal(false);
+        if (match(TRUE))
+            return new Expr.Literal(true);
+        if (match(NIL))
+            return new Expr.Literal(null);
 
         if (match(NUMBER, STRING)) {
             return new Expr.Literal(previous().literal);
         }
+
+        if (match(IDENTIFIER))
+            return new Expr.Variable(previous());
 
         if (match(LEFT_PAREN)) {
             System.out.println("( FOUUUUND");
@@ -140,11 +188,12 @@ public class Parser {
         }
 
         throw error(peek(), "Expect expression.");
-        
+
     }
 
     private Token consume(TokenType type, String message) {
-        if (check(type)) return advance();
+        if (check(type))
+            return advance();
 
         throw error(peek(), message);
     }
@@ -153,7 +202,8 @@ public class Parser {
         advance();
 
         while (!isAtEnd()) {
-            if (previous().type == SEMICOLON) return;
+            if (previous().type == SEMICOLON)
+                return;
 
             switch (peek().type) {
                 case CLASS:
@@ -180,7 +230,7 @@ public class Parser {
      * If the current token has any of these types return true;
      */
     private boolean match(TokenType... types) {
-        for (TokenType type: types) {
+        for (TokenType type : types) {
             if (check(type)) {
                 advance();
                 return true;
@@ -194,7 +244,8 @@ public class Parser {
      * Check if the current token is of the given type
      */
     private boolean check(TokenType type) {
-        if (isAtEnd()) return false;
+        if (isAtEnd())
+            return false;
 
         return peek().type == type;
     }
@@ -203,7 +254,8 @@ public class Parser {
      * Advance the current pointer 1 step ahead
      */
     private Token advance() {
-        if (!isAtEnd()) current++;
+        if (!isAtEnd())
+            current++;
         return previous();
     }
 
@@ -227,8 +279,5 @@ public class Parser {
     private Token previous() {
         return tokens.get(current - 1);
     }
-
-
-
 
 }
